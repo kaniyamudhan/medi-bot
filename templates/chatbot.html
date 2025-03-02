@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h2>Chatbot</h2>
+    <form id="chatbot-form" method="post">
+        <input type="radio" name="option" value="Book Appointment" checked> Book Appointment
+        <input type="radio" name="option" value="Know About Diseases"> Know About Diseases
+        <div id="appointment-form">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="text" name="disease" placeholder="Disease" required>
+            <input type="text" name="clinic" placeholder="Clinic Name" required> <!-- Add clinic field -->
+            <input type="date" name="date" required>
+            <input type="time" name="time" required>
+            <button type="submit">Book Appointment</button>
+        </div>
+        <div id="disease-form">
+            <input type="text" name="disease_query" placeholder="Enter Disease Name">
+            <button type="submit">Ask Chatbot</button>
+        </div>
+    </form>
+    <div id="response"></div>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Doctor Appointment System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .section {
+            min-height: 100vh;
+            border-bottom: 2px solid #ccc;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section p {
+            text-align: justify;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section#intro {
+            background-color: #e0f7fa;
+        }
+
+        .section#about-us {
+            background-color: #e8f5e9;
+        }
+
+        .section#news {
+            background-color: #fff3e0;
+        }
+
+        .section#our-services {
+            background-color: #f3e5f5;
+        }
+
+        .section#contact-us {
+            background-color: #f5f5f5;
+        }
+
+        .chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0078d7;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            max-width: 90%;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .chatbot-card {
+            border-radius: 15px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            max-height: 350px;
+            scrollbar-width: thin;
+            scrollbar-color: #0078d7 #f1f1f1;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            padding: 10px;
+        }
+
+        .chat-message {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .chat-bubble {
+            padding: 10px;
+            border-radius: 15px;
+            max-width: 75%;
+        }
+
+        .user-message .chat-bubble {
+            background-color: #0078d7;
+            color: white;
+            text-align: right;
+        }
+
+        .bot-message .chat-bubble {
+            background-color: rgba(57, 192, 237, .2);
+            text-align: left;
+        }
+
+        #chat-input {
+            resize: none;
+            height: 40px;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #0078d7;
+            border-radius: 10px;
+        }
+
+        .chat-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .service-item {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .service-item h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .service-item p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .service-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-img {
+            height: 200px;
+            /* Fixed image height */
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card-body {
+            flex: 1;
+            /* Ensure the card body takes up the remaining space */
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            /* Fixed title size */
+            margin-bottom: 0.75rem;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            /* Fixed text size */
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .profile-card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .profile-card .card-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-card .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-card .card-body p {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .profile-card .card-body form {
+            width: 100%;
+        }
+
+        .profile-card .card-body form .mb-3 {
+            width: 100%;
+        }
+
+        .profile-card .card-body form .btn {
+            width: 100%;
+        }
+
+        .view-button {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s, opacity 0.5s linear;
+        }
+
+        .card:hover .view-button {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Hospital Appointment System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Intro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- User Info -->
+    <div class="container mt-4">
+        <br>
+        <br>
+        <br>
+        <h1>Welcome, {{ user['name'] }}</h1>
+        <p><strong>Email:</strong> {{ user['email'] }}</p>
+        <p><strong>Phone:</strong> {{ user['phone'] }}</p>
+    </div>
+
+
+    <!-- Main Profile Card -->
+    <div class="container mt-4">
+        <div class="card profile-card">
+            <div class="card-body">
+                <h2 class="card-title text-center">Profile</h2>
+                <div class="row">
+                    <!-- Profile Column -->
+                    <div class="col-md-4">
+                        <div class="card mb-3" style="height: 180px;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Profile</h5>
+                                <p class="card-text">View your detailed profile information.</p>
+                                <button type="button" class="btn btn-primary view-button" data-bs-toggle="modal"
+                                    data-bs-target="#profileModal">
+                                    View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Update Column -->
+                    <div class="col-md-4">
+                        <div class="card mb-3" style="height: 180px;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Update</h5>
+                                <p class="card-text">Update your account details information.</p>
+                                <button type="button" class="btn btn-primary view-button" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal">
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Appointments Column -->
+                    <div class="col-md-4">
+                        <div class="card mb-3" style="height: 180px;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">Appointments</h5>
+                                <p class="card-text">View and manage your appointments.</p>
+                                <button type="button" class="btn btn-primary view-button" data-bs-toggle="modal"
+                                    data-bs-target="#appointmentsModal">
+                                    View
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Profile Modal -->
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Name:</strong> {{ user['name'] }}</p>
+                    <p><strong>Username:</strong> {{ user['username'] }}</p>
+                    <p><strong>Email:</strong> {{ user['email'] }}</p>
+                    <p><strong>Phone:</strong> {{ user['phone'] }}</p>
+                    <p><strong>Diseases:</strong> {{ user['diseases'] }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">Update Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/edit_profile" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" value="{{ user['username'] }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ user['name'] }}" placeholder="Enter new name (optional)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ user['email'] }}" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control" value="{{ user['phone'] }}" placeholder="Enter new phone number (optional)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Edit Diseases (comma-separated)</label>
+                            <input type="text" name="diseases" class="form-control" value="{{ user['diseases'] }}" placeholder="Enter new diseases (optional)">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" placeholder="Enter new password (optional)">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Appointments Modal -->
+    <div class="modal fade" id="appointmentsModal" tabindex="-1" aria-labelledby="appointmentsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="appointmentsModalLabel">Appointments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if appointments %}
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>S.no</th>
+                                <th>Name</th>
+                                <!-- <th>Email</th> -->
+                                <th>Disease</th>
+                                <th>Clinic</th>
+                                <!-- <th>Date</th> -->
+                                <!-- <th>Time</th> -->
+                                <th>Status</th>
+                                <!-- <th>Action</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments %}
+                            <tr id="appointment-{{ appt['_id'] }}">
+                                <td>{{ loop.index }}</td>
+                                <td>{{ appt['name'] }}</td>
+                                <!-- <td>{{ appt['email'] }}</td> -->
+                                <td>{{ appt['disease'] }}</td>
+                                <td>{{ appt['clinic'] }}</td>
+                                <!-- <td>{{ appt['date'] }}</td> -->
+                                <!-- <td>{{ appt['time'] }}</td> -->
+                                <td>
+                                    {% if appt['status'] == 'Upcoming' %}
+                                    <span class="badge bg-success">Upcoming</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Ended</span>
+                                    {% endif %}
+                                </td>
+                                <!-- <td>
+                                    <button class="btn btn-danger" onclick="deleteAppointment('{{ appt['_id'] }}')">Delete</button>
+                                </td> -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-muted">No appointments found.</p>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment List -->
+    <div class="container mt-4">
+        <h3>Your Appointments</h3>
+        {% if appointments %}
+        <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>S.no</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Disease</th>
+                    <th>Clinic</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr id="appointment-{{ appt['_id'] }}">
+                    <td>{{ loop.index }}</td>
+                    <td>{{ appt['name'] }}</td>
+                    <td>{{ appt['email'] }}</td>
+                    <td>{{ appt['disease'] }}</td>
+                    <td>{{ appt['clinic'] }}</td>
+                    <td>{{ appt['date'] }}</td>
+                    <td>{{ appt['time'] }}</td>
+                    <td>
+                        {% if appt['status'] == 'Upcoming' %}
+                        <span class="badge bg-success">Upcoming</span>
+                        {% else %}
+                        <span class="badge bg-danger">Ended</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteAppointment('{{ appt['_id'] }}')">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">No appointments found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <!-- <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Healthcare System | Powered by AI</p>
+            <p class="small">Designed with ❤️ for a healthier world</p>
+        </div>
+    </footer> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function deleteAppointment(appointmentId) {
+            if (confirm('Are you sure you want to delete this appointment?')) {
+                fetch('{{ url_for("delete_appointment_route", appointment_id="") }}' + appointmentId, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('appointment-' + appointmentId).remove();
+                            location.reload();
+                        } else {
+                            alert('Failed to delete appointment.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting the appointment.');
+                    });
+            }
+        }
+    </script>
+</body>
+
+</html>

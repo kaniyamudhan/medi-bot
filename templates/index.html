@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Hospital Appointment System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .section {
+            min-height: 100vh;
+            border-bottom: 2px solid #ccc;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .section p {
+            text-align: justify;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section#intro {
+            background-color: #e0f7fa;
+        }
+
+        .section#about-us {
+            background-color: #e8f5e9;
+        }
+
+        .section#news {
+            background-color: #fff3e0;
+        }
+
+        .section#our-services {
+            background-color: #f3e5f5;
+        }
+
+        .section#contact-us {
+            background-color: #f5f5f5;
+        }
+
+        .chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #0078d7;
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            max-width: 90%;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .chatbot-card {
+            border-radius: 15px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            max-height: 350px;
+            scrollbar-width: thin;
+            scrollbar-color: #0078d7 #f1f1f1;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            padding: 10px;
+        }
+
+        .chat-message {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .chat-bubble {
+            padding: 10px;
+            border-radius: 15px;
+            max-width: 75%;
+        }
+
+        .user-message .chat-bubble {
+            background-color: #0078d7;
+            color: white;
+            text-align: right;
+        }
+
+        .bot-message .chat-bubble {
+            background-color: rgba(57, 192, 237, .2);
+            text-align: left;
+        }
+
+        #chat-input {
+            resize: none;
+            height: 40px;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: #0078d7;
+            border-radius: 10px;
+        }
+
+        .chat-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .service-item {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .service-item h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+        }
+
+        .service-item p {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .service-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-img {
+            height: 200px;
+            /* Fixed image height */
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card-body {
+            flex: 1;
+            /* Ensure the card body takes up the remaining space */
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            /* Fixed title size */
+            margin-bottom: 0.75rem;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            /* Fixed text size */
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .news-section {
+            padding: 20px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-height: 800px;
+            /* Fixed height for the grid */
+            overflow: hidden;
+            /* Prevent scrolling */
+        }
+
+        .news-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: 250px;
+            /* Fixed height for each card */
+            overflow: hidden;
+            /* Prevent content overflow */
+            position: relative;
+        }
+
+        .news-item img {
+            width: 100%;
+            height: 120px;
+            /* Fixed height for images */
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .news-item h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .news-item p {
+            font-size: 0.9rem;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .news-item .read-more {
+            display: none;
+            /* Hide "Read More" button by default */
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+
+        .news-item:hover .read-more {
+            display: block;
+            /* Show "Read More" button on hover */
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .contact-card {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .contact-card .form-control {
+            margin-bottom: 15px;
+        }
+
+        .contact-card .btn-send {
+            width: 100%;
+        }
+
+        #intro {
+            background: url('{{ url_for("static", filename="images/intro-bg.jpg") }}') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        #intro .container {
+            background: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent background */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        #intro h2,
+        #intro p,
+        #intro .btn {
+            color: white;
+        }
+
+        .view-button,
+        .book-button {
+            display: none;
+            /* Hide buttons by default */
+        }
+
+        .service-card:hover .view-button,
+        .service-card:hover .book-button {
+            display: block;
+            /* Show buttons on hover */
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .navbar-dark.bg-primary.dark-mode {
+            background-color: #333 !important;
+        }
+
+        .card.dark-mode,
+        .modal-content.dark-mode {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+
+        .btn-primary.dark-mode {
+            background-color: #0078d7;
+            border-color: #0078d7;
+        }
+
+        .btn-secondary.dark-mode {
+            background-color: #555;
+            border-color: #555;
+        }
+
+        .chat-container.dark-mode,
+        .chat-bubble.dark-mode {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">Hospital Appointment System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#intro">Intro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about-us">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#our-services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#news">News</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#contact-us">Contact</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profile') }}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+<!-- Introduction Section -->
+<section class="section" id="intro" style="background: url({{ url_for('static', filename='images/intro-bg.jpg') }}) no-repeat center center fixed; background-size: cover;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="text-white">Introduction</h2>
+                <p class="text-white">Welcome to our Healthcare System. We are dedicated to providing the best healthcare services to our patients. Our mission is to ensure that every individual has access to quality healthcare and expert medical advice.</p>
+                <br> <a href="#about-us" class="btn btn-primary">Learn More</a>
+            </div>
+            <div class="col-md-6">
+                <!-- Optionally, you can add an image here if you want an image on the right side -->
+                <img src="{{ url_for('static', filename='images/intro.jpg') }}" class="img-fluid rounded" alt="Introduction">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Us Section -->
+<section class="section" id="about-us" style="background: url({{ url_for('static', filename='images/about-bg.jpg') }}) no-repeat center center fixed; background-size: cover;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='images/about.jpg') }}" class="img-fluid rounded" alt="About Us">
+            </div>
+            <div class="col-md-6">
+                <div class="card border-primary mb-3" style="max-width: 540px;">
+                    <div class="card-header bg-primary text-white">About Us</div>
+                    <div class="card-body text-primary">
+                        <p class="card-text">Our team consists of highly skilled doctors, nurses, and healthcare professionals who are committed to delivering exceptional care. We use the latest technology and medical practices to ensure the best outcomes for our patients.</p>
+                        <p class="card-text">We are dedicated to providing the best healthcare services to our patients. Our mission is to ensure that every individual has access to quality healthcare and expert medical advice.</p>
+                   <br>     <a href="#news" class="btn btn-primary">News</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="section" id="our-services" style="background: url({{ url_for('static', filename='images/service-bg.jpg') }}) no-repeat center center fixed; background-size: cover;">
+    <h2 class="fw-bold text-primary">Our Services</h2>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card service-card border-0 shadow-lg">
+                <img src="{{ url_for('static', filename='images/appointment.jpg') }}" class="card-img-top img-fluid service-img" alt="Appointment">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Book Appointments</h5>
+                    <p class="card-text">Schedule appointments with top hospitals & specialists easily.</p>
+                    <button type="button" class="btn btn-primary book-button" data-bs-toggle="modal" data-bs-target="#appointmentModal1">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card service-card border-0 shadow-lg">
+                <img src="{{ url_for('static', filename='images/consultation.jpg') }}" class="card-img-top img-fluid service-img" alt="Consultation">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Expert Consultation</h5>
+                    <p class="card-text">Get expert advice from doctors and health professionals anytime.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card service-card border-0 shadow-lg">
+                <img src="{{ url_for('static', filename='images/healthinfo.jpg') }}" class="card-img-top img-fluid service-img" alt="Health Info">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">Health Information</h5>
+                    <p class="card-text">Stay updated with the latest health news, tips, and awareness.</p>
+                    <button type="button" class="btn btn-primary view-button" data-bs-toggle="modal" data-bs-target="#healthInfoModal">
+                        View Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+    <!-- Appointment Modal -->
+    <div class="modal fade" id="appointmentModal1" tabindex="-1" aria-labelledby="appointmentModalLabel1"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="appointmentModalLabel1">Book an Appointment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="appointmentForm">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="disease" class="form-label">Disease</label>
+                            <select class="form-control" id="disease" name="disease" required>
+                                <option value="">Select a disease</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clinic" class="form-label">Clinic</label>
+                            <select class="form-control" id="clinic" name="clinic" required>
+                                <option value="">Select a clinic</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Time</label>
+                            <input type="time" class="form-control" id="time" name="time" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <div id="appointmentMessage" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Health Information Modal -->
+    <div class="modal fade" id="healthInfoModal" tabindex="-1" aria-labelledby="healthInfoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="healthInfoModalLabel">Health Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="healthInfoForm">
+                        <div class="mb-3">
+                            <label for="diseaseInput" class="form-label">Enter a disease name:</label>
+                            <input type="text" class="form-control" id="diseaseInput" name="diseaseInput" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    <div id="diseaseSummary" class="mt-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- News Section -->
+<section class="section" id="news" style="background: url({{ url_for('static', filename='images/news-bg.jpg') }}) no-repeat center center fixed; background-size: cover;">
+    <div class="container">
+        <h2 class="fw-bold text-white">Latest Healthcare News</h2>
+        <div class="news-grid" id="news-grid"></div>
+        <div class="pagination">
+            <button id="prev-page" class="btn btn-primary" disabled>Previous Page</button>
+            <button id="next-page" class="btn btn-primary">Next Page</button>
+        </div>
+    </div>
+</section>
+
+
+
+
+    <!-- Chatbot Modal -->
+    <div class="modal fade" id="chatbotModal" tabindex="-1" aria-labelledby="chatbotModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatbotModalLabel">Chatbot</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="chatbotContent">
+                        <!-- Chatbot content will be dynamically inserted here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Chatbot Icon -->
+    <div class="chatbot-icon shadow-lg" onclick="toggleChatbot()">💬</div>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-container" class="chat-container shadow-lg">
+        <div class="card chatbot-card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <span>AI Chatbot</span>
+                <button onclick="toggleChatbot()" class="btn btn-sm btn-light">✖</button>
+            </div>
+            <div class="card-body chat-body" id="chat-messages"></div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <textarea id="chat-input" class="form-control" placeholder="Type a message..." rows="1"></textarea>
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Confirmation Modal -->
+    <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="appointmentModalLabel">Appointment Confirmed</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Your appointment has been successfully booked.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Healthcare System | Powered by Cyrus Byte</p>
+            <p class="small">Designed with ❤️ for a healthier world</p>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle Button -->
+    <div class="form-check form-switch position-fixed top-0 end-0 m-3">
+        <input class="form-check-input" type="checkbox" id="darkModeToggle">
+        <label class="form-check-label text-white" for="darkModeToggle">Dark Mode</label>
+    </div>
+
+    <script>
+        // Ensure variables are declared only once
+        if (typeof bookingStep === "undefined") {
+            var bookingStep = 0;
+            var bookingData = {};
+        }
+
+        // Disease List (10 major diseases with 3 clinics each)
+        if (typeof diseases === "undefined") {
+            var diseases = {
+                "Fever": ["City Hospital", "Apollo Clinic", "Green Life"],
+                "Diabetes": ["Sunrise Clinic", "Sugar Care Center", "Metro Health"],
+                "Hypertension": ["Carewell Hospital", "BP Wellness", "MediCare"],
+                "Migraine": ["Neurology Care", "Headache Relief Clinic", "NeuroMed"],
+                "Eye Infection": ["Vision Hospital", "Eye Care Center", "Ophthalmic Plus"],
+                "Skin Allergy": ["DermaLife", "Skin Solutions", "Healthy Skin Clinic"],
+                "Thyroid": ["Hormone Wellness", "Endocrine Care", "Thyroid Cure"],
+                "Arthritis": ["Joint Relief Center", "Ortho Life", "Bone & Joint Care"],
+                "Asthma": ["Lung Health", "Breathe Easy", "Pulmonology Plus"],
+                "Dental Pain": ["Smile Dental", "Tooth Care Clinic", "Oral Health Center"]
+            };
+        }
+
+        // Populate disease dropdown
+        document.addEventListener('DOMContentLoaded', () => {
+            const diseaseSelect = document.getElementById('disease');
+            const clinicSelect = document.getElementById('clinic');
+
+            for (const disease in diseases) {
+                const option = document.createElement('option');
+                option.value = disease;
+                option.textContent = disease;
+                diseaseSelect.appendChild(option);
+            }
+
+            diseaseSelect.addEventListener('change', () => {
+                const selectedDisease = diseaseSelect.value;
+                clinicSelect.innerHTML = '<option value="">Select a clinic</option>'; // Clear previous options
+
+                if (selectedDisease && diseases[selectedDisease]) {
+                    diseases[selectedDisease].forEach(clinic => {
+                        const option = document.createElement('option');
+                        option.value = clinic;
+                        option.textContent = clinic;
+                        clinicSelect.appendChild(option);
+                    });
+                }
+            });
+
+            document.getElementById('appointmentForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                const formData = new FormData(this);
+                fetch('/book_appointment', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show the appointment confirmation modal
+                            const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+                            appointmentModal.show();
+
+                            // Optionally, you can also show a success message in the chatbot
+                            document.getElementById('appointmentMessage').innerHTML = `<p class="text-success">${data.message}</p>`;
+                            document.getElementById('appointmentForm').reset(); // Reset the form
+
+                            // Close the booking modal
+                            const bookingModal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal1'));
+                            bookingModal.hide();
+
+                            // Ensure the page is accessible after closing the modal
+                            document.body.classList.remove('modal-open');
+                            document.querySelector('.modal-backdrop').remove();
+
+                            // Refresh the page after the confirmation modal is closed
+                            document.getElementById('appointmentModal').addEventListener('hidden.bs.modal', function () {
+                                location.reload();
+                            });
+                        } else {
+                            document.getElementById('appointmentMessage').innerHTML = `<p class="text-danger">${data.message}</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error booking appointment:', error);
+                        document.getElementById('appointmentMessage').innerHTML = `<p class="text-danger">Error booking appointment. Please try again.</p>`;
+                    });
+            });
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('appointmentForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                const formData = new FormData(this);
+                fetch('/book_appointment', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show the appointment confirmation modal
+                            const appointmentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+                            appointmentModal.show();
+
+                            // Optionally, you can also show a success message in the chatbot
+                            document.getElementById('appointmentMessage').innerHTML = `<p class="text-success">${data.message}</p>`;
+                            document.getElementById('appointmentForm').reset(); // Reset the form
+                        } else {
+                            document.getElementById('appointmentMessage').innerHTML = `<p class="text-danger">${data.message}</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error booking appointment:', error);
+                        document.getElementById('appointmentMessage').innerHTML = `<p class="text-danger">Error booking appointment. Please try again.</p>`;
+                    });
+            });
+
+            // Handle Health Information Form Submission
+            document.getElementById('healthInfoForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+                const diseaseName = document.getElementById('diseaseInput').value;
+                fetchDiseaseInfo(diseaseName);
+            });
+
+            function fetchDiseaseInfo(diseaseName) {
+                fetch(`/get_disease_info?disease=${encodeURIComponent(diseaseName)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const summaryDiv = document.getElementById('diseaseSummary');
+                        if (data.error) {
+                            summaryDiv.innerHTML = `<p class="text-danger">${data.error}</p>`;
+                        } else {
+                            // Parse the raw string response
+                            let result = data.result;
+                            let symptoms = "No data available";
+                            let causes = "No data available";
+                            let treatment = "No data available";
+                            let foodSuggestions = "No data available";
+
+                            if (result.includes("Symptoms:")) {
+                                symptoms = result.split("Symptoms:")[1].split("Causes:")[0].trim();
+                            }
+                            if (result.includes("Causes:")) {
+                                causes = result.split("Causes:")[1].split("Treatment:")[0].trim();
+                            }
+                            if (result.includes("Treatment:")) {
+                                treatment = result.split("Treatment:")[1].split("**Dietary Recommendations:**")[0].trim();
+                            }
+                            if (result.includes("**Dietary Recommendations:**")) {
+                                foodSuggestions = result.split("**Dietary Recommendations:**")[1].trim();
+                            }
+
+                            // Format the information into a structured list
+                            let infoList = `
+                            <h4>${diseaseName}</h4>
+                            <ul class="list-group">
+                        `;
+
+                            if (symptoms !== "No data available") {
+                                infoList += `<li class="list-group-item"><strong>Symptoms:</strong> ${symptoms}</li>`;
+                            }
+                            if (causes !== "No data available") {
+                                infoList += `<li class="list-group-item"><strong>Causes:</strong> ${causes}</li>`;
+                            }
+                            if (treatment !== "No data available") {
+                                infoList += `<li class="list-group-item"><strong>Treatment:</strong> ${treatment}</li>`;
+                            }
+                            if (foodSuggestions !== "No data available") {
+                                infoList += `<li class="list-group-item"><strong>Dietary Recommendations:</strong> ${foodSuggestions}</li>`;
+                            }
+
+                            infoList += `</ul>`;
+                            summaryDiv.innerHTML = infoList;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching disease info:', error);
+                        const summaryDiv = document.getElementById('diseaseSummary');
+                        summaryDiv.innerHTML = `<p class="text-danger">Error fetching disease information. Please try again later.</p>`;
+                    });
+            }
+            document.getElementById('healthInfoModal').addEventListener('hidden.bs.modal', function (event) {
+                document.getElementById('diseaseInput').value = ''; // Clear the input field
+                document.getElementById('diseaseSummary').innerHTML = ''; // Clear the summary content
+            });
+
+            const apiKey = '9db504a15e9f479190895d64b8d76359';
+            const url = `https://newsapi.org/v2/top-headlines?category=health&apiKey=${apiKey}`;
+            const newsGrid = document.getElementById('news-grid');
+            const nextPageButton = document.getElementById('next-page');
+            const prevPageButton = document.getElementById('prev-page');
+            let currentPage = 1;
+            const pageSize = 9; // Number of news items to display per page
+
+            function fetchNews(page) {
+                fetch(`${url}&page=${page}&pageSize=${pageSize}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        newsGrid.innerHTML = '';
+                        data.articles.forEach(article => {
+                            if (article.urlToImage) { // Only show articles with images
+                                const newsItem = document.createElement('div');
+                                newsItem.className = 'news-item';
+                                const imageUrl = article.urlToImage || 'default-image.jpg'; // Use default image if missing
+                                newsItem.innerHTML = `
+                                    <img src="${imageUrl}" alt="${article.title}" onerror="this.onerror=null;this.src='default-image.jpg';">
+                                    <h3>${article.title}</h3>
+                                    <p>${article.description || 'No description available.'}</p>
+                                    ${article.url ? `<a href="${article.url}" target="_blank" class="btn btn-primary read-more">Read More</a>` : ''}
+                                `;
+                                newsGrid.appendChild(newsItem);
+                            }
+                        });
+                        // Enable/disable pagination buttons
+                        prevPageButton.disabled = page <= 1;
+                        nextPageButton.disabled = data.articles.length < pageSize;
+                    })
+                    .catch(error => console.error('Error fetching news:', error));
+            }
+
+            fetchNews(currentPage);
+
+            nextPageButton.addEventListener('click', () => {
+                currentPage++;
+                fetchNews(currentPage);
+            });
+
+            prevPageButton.addEventListener('click', () => {
+                currentPage--;
+                fetchNews(currentPage);
+            });
+        });
+
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode');
+            document.querySelectorAll('.navbar, .card, .modal-content, .btn-primary, .btn-secondary, .chat-container, .chat-bubble').forEach(el => {
+                el.classList.toggle('dark-mode');
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

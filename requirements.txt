@@ -1,0 +1,6 @@
+Flask
+pymongo
+bcrypt
+python-dotenv
+requests
+google-generativeai
